@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func solve() []int64 {
+func solve() int64 {
 	rows := utils.ReadFile("input.txt")
 
 	limits := map[string]int64{
@@ -49,5 +49,34 @@ func solve() []int64 {
 	}
 	fmt.Println(solution)
 
-	return possibleGames
+	return solution
+}
+func solve2() int64 {
+	rows := utils.ReadFile("input.txt")
+	var solution int64
+	for _, r := range rows {
+		t := strings.Split(r, ":")
+		games := strings.Split(t[1], ";")
+		thisSet := map[string]int64{
+			"red":   0,
+			"green": 0,
+			"blue":  0,
+		}
+		for _, game := range games {
+			g := strings.Split(game, ",")
+			for _, s := range g {
+				c := strings.Split(strings.Trim(s, " "), " ")
+				color := c[1]
+				num, _ := strconv.ParseInt(c[0], 10, 64)
+				if thisSet[color] < num {
+					thisSet[color] = num
+				}
+			}
+		}
+		solution = solution + (thisSet["red"] * thisSet["green"] * thisSet["blue"])
+	}
+
+	fmt.Println(solution)
+
+	return solution
 }
