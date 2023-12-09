@@ -25,10 +25,20 @@ func solve(f string) int64 {
 		},
 	}
 	raw := utils.ReadFile(f)
+	currentKey := ""
 	for i, row := range raw {
 		if i == 0 {
 			data.AddSeeds(row)
+			continue
 		}
+		if row == "" {
+			continue
+		}
+		if data.ChangeTopic(row) != "" {
+			currentKey = data.ChangeTopic(row)
+			continue
+		}
+		data.AddMapping(currentKey, row)
 	}
 	return solution
 }
@@ -47,9 +57,22 @@ func (a *Almanac) AddSeeds(s string) []int64 {
 
 func (a *Almanac) AddMapping(key, s string) map[int64]int64 {
 	vals := strings.Split(s, " ")
-	seed := toInt(vals[0])
-	start := toInt(vals[1])
+	destinationRangeStart := toInt(vals[0])
+	sourceRangeStart := toInt(vals[1])
 	length := toInt(vals[2])
+	for i := int64(0); i < length; i++ {
+		a.Mapping[key][sourceRangeStart+i] = destinationRangeStart + i
+	}
+	return a.Mapping[key]
+}
+
+func (a *Almanac) ChangeTopic(s string) string {
+	for key := range a.Mapping {
+		if strings.Contains(s, key) {
+			return key
+		}
+	}
+	return ""
 }
 
 func toInt(s string) int64 {
