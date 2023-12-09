@@ -36,7 +36,7 @@ func Test_solve(t *testing.T) {
 		want int64
 	}{
 		// TODO: Add test cases.
-		{name: "success", want: 0},
+		{name: "success", want: 23235},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
