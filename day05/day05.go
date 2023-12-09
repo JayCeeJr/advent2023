@@ -9,10 +9,10 @@ import (
 type Almanac struct {
 	Seeds   []int64
 	Mapping map[string]map[int64]int64
+	SeedMap map[int64][]int64
 }
 
 func solve(f string) int64 {
-	var solution int64
 	data := &Almanac{
 		Mapping: map[string]map[int64]int64{
 			"seed-to-soil":            make(map[int64]int64),
@@ -40,7 +40,8 @@ func solve(f string) int64 {
 		}
 		data.AddMapping(currentKey, row)
 	}
-	return solution
+	data.MapSeeds()
+	return data.getLowestValue()
 }
 
 func (a *Almanac) AddSeeds(s string) []int64 {
@@ -75,7 +76,36 @@ func (a *Almanac) ChangeTopic(s string) string {
 	return ""
 }
 
+func (a *Almanac) MapSeeds() {
+	a.SeedMap = make(map[int64][]int64)
+	for _, seed := range a.Seeds {
+		for k := range a.Mapping {
+			a.SeedMap[seed] = append(a.SeedMap[seed], a.getMappedValue(seed, k))
+		}
+	}
+}
+
+func (a *Almanac) getMappedValue(seed int64, key string) int64 {
+	dest, ok := a.Mapping[key][seed]
+	if ok {
+		return dest
+	} else {
+		return seed
+	}
+}
+
 func toInt(s string) int64 {
 	parsed, _ := strconv.ParseInt(strings.Trim(s, " "), 10, 64)
 	return parsed
+}
+func (a *Almanac) getLowestValue() int64 {
+	lowest := int64(99999999999999)
+	for _, seed := range a.SeedMap {
+		for _, val := range seed {
+			if val < lowest {
+				lowest = val
+			}
+		}
+	}
+	return lowest
 }

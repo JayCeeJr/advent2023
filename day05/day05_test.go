@@ -35,7 +35,7 @@ func Test_solve(t *testing.T) {
 	}{
 		{
 			name: "success",
-			f:    "example.txt",
+			f:    "input.txt",
 			want: 0,
 		},
 	}
